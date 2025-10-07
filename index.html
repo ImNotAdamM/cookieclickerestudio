@@ -711,6 +711,12 @@
             <div class="study-info">
                 <div class="study-timer">Tiempo estudiando: <span id="studyTime">00:00:00</span></div>
                 <div class="cps">Galletas de estudio: <span id="studyCookies">0</span></div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.1);">
+                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+                        <input type="checkbox" id="pauseOnBlur" style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;">
+                        <span>Pausar al cambiar de pestaña</span>
+                    </label>
+                </div>
             </div>
 
             <div class="stats">
@@ -860,11 +866,14 @@
             conquered: false,
             rebirths: 0,
             bakeryName: 'Mi Panadería de Estudio',
-            isActive: true
+            isActive: true,
+            pauseOnBlur: false
         };
 
-        // Detectar cambio de pestaña
+        // Detectar cambio de pestaña (solo si está activado)
         document.addEventListener('visibilitychange', function() {
+            if (!gameState.pauseOnBlur) return;
+            
             if (document.hidden) {
                 gameState.isActive = false;
                 showNotification('Pausa: Vuelve a la pestaña para seguir estudiando!');
@@ -874,9 +883,11 @@
             }
         });
 
-        // Detectar foco de ventana
+        // Detectar foco de ventana (solo si está activado)
         window.addEventListener('blur', function() {
-            gameState.isActive = false;
+            if (gameState.pauseOnBlur) {
+                gameState.isActive = false;
+            }
         });
 
         window.addEventListener('focus', function() {
@@ -981,6 +992,8 @@
         }
 
         function update() {
+            if (!gameState.isActive) return;
+            
             const bonus = 1 + (gameState.rebirths * 0.15);
             gameState.cookies += (gameState.cps / 10) * bonus;
             gameState.totalCookies += (gameState.cps / 10) * bonus;
@@ -988,6 +1001,8 @@
         }
 
         function updateStudyTime() {
+            if (!gameState.isActive) return;
+            
             gameState.studyTime++;
             const bonus = 1 + (gameState.rebirths * 0.15);
             gameState.cookies += 1 * bonus;
