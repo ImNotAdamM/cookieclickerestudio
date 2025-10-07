@@ -949,6 +949,17 @@
             renderMissions();
             renderBuildingsDisplay();
             
+            // Event listener para el checkbox
+            document.getElementById('pauseOnBlur').addEventListener('change', function(e) {
+                gameState.pauseOnBlur = e.target.checked;
+                if (e.target.checked) {
+                    showNotification('Modo pausa activado');
+                } else {
+                    showNotification('Modo pausa desactivado');
+                    gameState.isActive = true;
+                }
+            });
+            
             setInterval(update, 100);
             setInterval(updateStudyTime, 1000);
             setInterval(updateCooldowns, 1000);
@@ -1087,7 +1098,7 @@
             if (gameState.cookies >= cost) {
                 gameState.cookies -= cost;
                 building.count++;
-                building.cooldown = 600;
+                building.cooldown = 60; // 1 minuto
                 calculateCPS();
                 renderBuildings();
                 renderBuildingsDisplay();
@@ -1112,7 +1123,7 @@
             if (gameState.cookies >= cost) {
                 gameState.cookies -= cost;
                 upgrade.count++;
-                upgrade.cooldown = 600;
+                upgrade.cooldown = 300; // 5 minutos
                 calculateCPS();
                 renderEfficiencyUpgrades();
                 updateDisplay();
